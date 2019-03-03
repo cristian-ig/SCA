@@ -28,27 +28,27 @@ merchant_encrypted_key = cipher_rsa.encrypt(aes_bytekey)
 
 aes_key = AES.new(aes_bytekey,AES.MODE_CBC)
 
-print(merchant_encrypted_key)
+# print(merchant_encrypted_key)
 
 
 
 # print("AES_KEY",aes_key.hexdigest())
-print("MERCHANt",merchant_publicKey)
+# print("MERCHANt",merchant_publicKey)
 TCP_IP = '127.0.0.1'
 PORT = 6001
 
 server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.connect((TCP_IP,PORT))
-print("Len",len(merchant_encrypted_key))
+# print("Len",len(merchant_encrypted_key))
 server.send(merchant_encrypted_key)
-signature = server.recv(10240)
-print(len(signature))
-signature =  pickle.loads(signature)
-
-print(signature['SID'])
+signature = server.recv(3024)
+print("reciving..", signature)
+# print(len(signature))
+signature = pickle.loads(signature)
+print(signature)
 
 key = RSA.import_key(loadKey('mPK'))
-print("Verify",pkcs1_15.new(key).verify(SHA256.new(str(signature['SID'],'UTF-8','ignore')),str(signature['SSID'],'UTF-8','ignore')))
+print("Verify",pkcs1_15.new(key).verify(SHA256.new((signature['SID'],'UTF-8','ignore')),(signature['SSID'],'UTF-8','ignore')))
 
 
 
