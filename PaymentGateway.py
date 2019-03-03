@@ -1,7 +1,7 @@
 import Crypto
 from Crypto.PublicKey import RSA
 from Crypto import Random
-from utils import saveKey, loadKey
+from Utils import saveKey, loadKey
 
 
 random_generator = Random.new().read
