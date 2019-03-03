@@ -6,6 +6,7 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Random import get_random_bytes
 from Crypto.Signature import pkcs1_15
 import json
+import pickle
 
 from Utils import saveKey, loadKey
 import socket
@@ -60,8 +61,8 @@ while 1:
     if len(data)>0:
         print("Len",data)
         SID, SSID = signSessionId(data)
-        signature = json.dumps({'SID':str(SID),'SSID':str(SSID)})
-        conn.send(signature.encode('UTF-8'))
+        signature = json.dumps()
+        conn.send(pickle.dumps({'SID':SID,'SSID':SSID}))
 
     # conn.send('aaa')
 

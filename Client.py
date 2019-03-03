@@ -9,6 +9,7 @@ from Crypto.Hash import SHA256
 from Utils import saveKey, loadKey
 import socket
 import json
+import pickle
 
 # random_generator = Random.new().read
 # clientKeys = RSA.generate(1024,random_generator)
@@ -41,7 +42,9 @@ server.connect((TCP_IP,PORT))
 print("Len",len(merchant_encrypted_key))
 server.send(merchant_encrypted_key)
 signature = server.recv(10240)
-signature = json.loads(signature.decode())
+print(len(signature))
+signature =  pickle.loads(signature)
+
 print(signature['SID'])
 
 key = RSA.import_key(loadKey('mPK'))
