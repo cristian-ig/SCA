@@ -4,9 +4,11 @@ from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Random import get_random_bytes
-
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
 from Utils import saveKey, loadKey
 import socket
+import json
 
 # random_generator = Random.new().read
 # clientKeys = RSA.generate(1024,random_generator)
@@ -38,5 +40,12 @@ server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.connect((TCP_IP,PORT))
 print("Len",len(merchant_encrypted_key))
 server.send(merchant_encrypted_key)
+signature = server.recv(10240)
+signature = json.loads(signature.decode())
+print(signature['SID'])
+
+key = RSA.import_key(loadKey('mPK'))
+print("Verify",pkcs1_15.new(key).verify(SHA256.new(str(signature['SID'],'UTF-8','ignore')),str(signature['SSID'],'UTF-8','ignore')))
+
 
 

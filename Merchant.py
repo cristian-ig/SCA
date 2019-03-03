@@ -5,7 +5,7 @@ from Crypto.Hash import SHA256
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Random import get_random_bytes
 from Crypto.Signature import pkcs1_15
-import hashlib
+import json
 
 from Utils import saveKey, loadKey
 import socket
@@ -20,15 +20,18 @@ def signSessionId(aes_encrypted_key):
     print(aes_decrypted_key)
 
     SID = get_random_bytes(8)
-    SSID_hash = SHA256.new(SID)
+    SID_hash = SHA256.new(SID)
     key = RSA.import_key(loadKey('mSK'))
+    print("Session ID\n",SID)
 
-    print("Initial hash\n",SSID_hash)
-    SSID = pkcs1_15.new(key).sign(SSID_hash)
+    print("Initial hash\n",SID_hash)
+    SSID = pkcs1_15.new(key).sign(SID_hash)
 
     print("Signed hash\n",SSID)
-    key = RSA.import_key(loadKey('mPK'))
-    print("Verify",pkcs1_15.new(key).verify(SSID_hash,SSID))
+    # key = RSA.import_key(loadKey('mPK'))
+    # print("Verify",pkcs1_15.new(key).verify(SID_hash,SSID))
+
+    #Return session id and signed session id with merchant private key
     return (SID,SSID)
 
 
@@ -56,7 +59,10 @@ while 1:
     data = conn.recv(10240)
     if len(data)>0:
         print("Len",data)
-        print(signSessionId(data))
+        SID, SSID = signSessionId(data)
+        signature = json.dumps({'SID':str(SID),'SSID':str(SSID)})
+        conn.send(signature.encode('UTF-8'))
+
     # conn.send('aaa')
 
 conn.close()
