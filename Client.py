@@ -48,7 +48,7 @@ signature = pickle.loads(signature)
 print(signature)
 
 key = RSA.import_key(loadKey('mPK'))
-print("Verify",pkcs1_15.new(key).verify(SHA256.new((signature['SID'],'UTF-8','ignore')),(signature['SSID'],'UTF-8','ignore')))
+print("Verify",pkcs1_15.new(key).verify(SHA256.new(signature['SID']),(signature['SSID'])))
 
 
 
