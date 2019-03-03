@@ -1,3 +1,6 @@
+from tinydb import TinyDB, Query
+
+
 def saveKey(key, file):
     with open('keys/' + file, 'wb') as key_file:
         key_file.write(key)
@@ -10,6 +13,56 @@ def loadKey(file):
     return key
 
 
+def getDBName(dbn):
+    dbname = None
+    dbn = dbn.lower()
+    if dbn == "m":
+        dbname = "merchant"
+    elif dbn == "c":
+        dbname = "client"
+    elif dbn == "pg":
+        dbname = "payment"
+
+    return dbname
+
+
+def insert_SID_SSID(SID, SSID, database):
+    databasename = getDBName(database)
+    if databasename is None:
+        print("INVALID DATABASE NAME! TRY: M, C, PG")
+        return -1
+    database = TinyDB(databasename)
+    database.insert({"SID": SID, "SSID": SSID})
+
+
+def check_valid_SID(SID_to_be_checked, database):
+    databasename = getDBName(database)
+    if databasename is None:
+        print("INVALID DATABASE NAME! TRY: M, C, PG")
+        return -1
+    database = TinyDB(databasename)
+    query = Query()
+    if len(database.search(query.SID == SID_to_be_checked)) > 0:
+        return True
+    else:
+        return False
+
+
+def check_valid_SSID(SSID_to_be_checked, database):
+    databasename = getDBName(database)
+    if databasename is None:
+        print("INVALID DATABASE NAME! TRY: M, C, PG")
+        return -1
+    database = TinyDB(databasename)
+    query = Query()
+    if len(database.search(query.SSID == SSID_to_be_checked)) > 0:
+        return True
+    else:
+        return False
+
+def purge_database(dbname):
+    db = TinyDB(getDBName(dbname)).purge()
+    
 def sign_message(key):
     pass
 
