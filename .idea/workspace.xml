@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="f4d1f1ec-9204-4f50-b529-b6e0ad62df7a" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/T1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/T1.iml" afterDir="false" />
@@ -10,6 +11,9 @@
       <change beforePath="$PROJECT_DIR$/MiddleWare.py" beforeDir="false" afterPath="$PROJECT_DIR$/MiddleWare.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PaymentGateway.py" beforeDir="false" afterPath="$PROJECT_DIR$/PaymentGateway.py" afterDir="false" />
     </list>
+=======
+    <list default="true" id="f4d1f1ec-9204-4f50-b529-b6e0ad62df7a" name="Default Changelist" comment="" />
+>>>>>>> Stashed changes
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,11 +22,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Client.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="69">
               <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="34" />
+=======
+            <state relative-caret-position="238">
+              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -39,7 +51,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PaymentGateway.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="69">
@@ -79,7 +91,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="747" />
+    <option name="x" value="991" />
     <option name="y" value="435" />
     <option name="width" value="2100" />
     <option name="height" value="1635" />
@@ -214,15 +226,22 @@
       <workItem from="1551609587286" duration="161000" />
       <workItem from="1551609763577" duration="131000" />
       <workItem from="1551610454154" duration="258000" />
-      <workItem from="1551611866243" duration="471000" />
+      <workItem from="1551611866243" duration="803000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< Updated upstream
     <option name="totallyTimeSpent" value="1415000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+=======
+    <option name="totallyTimeSpent" value="1549000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="547" y="732" width="1400" height="1090" extended-state="0" />
+>>>>>>> Stashed changes
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14872068" />
@@ -230,7 +249,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32985386" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32881" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -252,6 +271,7 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/utils.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -259,6 +279,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="69">
           <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="34" />
+=======
+    <entry file="file://$PROJECT_DIR$/PaymentGateway.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>
@@ -272,10 +301,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PaymentGateway.py">
+    <entry file="file://$PROJECT_DIR$/Client.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="69">
           <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+=======
+        <state relative-caret-position="238">
+          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+>>>>>>> Stashed changes
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
