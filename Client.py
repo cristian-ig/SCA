@@ -4,6 +4,7 @@ from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Random import get_random_bytes
+
 from utils import saveKey, loadKey
 import socket
 
@@ -35,7 +36,7 @@ PORT = 6001
 
 server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.connect((TCP_IP,PORT))
-
+print("Len",len(merchant_encrypted_key))
 server.send(merchant_encrypted_key)
 
 
