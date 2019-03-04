@@ -7,7 +7,7 @@ from Crypto.Random import get_random_bytes
 from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 from Utils import saveKey, loadKey
-from Crypto.Util.Padding import pad,unpad
+from Crypto.Util.Padding import pad, unpad
 from base64 import b64decode
 import socket
 import json
@@ -21,10 +21,7 @@ import pickle
 # print(loadKey('cSK'))
 
 
-
-
 # print(merchant_encrypted_key)
-
 
 
 # print("AES_KEY",aes_key.hexdigest())
@@ -32,8 +29,8 @@ import pickle
 TCP_IP = '127.0.0.1'
 PORT = 6001
 
-server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server.connect((TCP_IP,PORT))
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.connect((TCP_IP, PORT))
 """
     Send aes key encrypted with merchent publickey rsa
 """
@@ -45,7 +42,7 @@ aes_bytekey = get_random_bytes(32)
 cipher_rsa = PKCS1_OAEP.new(RSA.import_key(merchant_publicKey))
 merchant_encrypted_key = cipher_rsa.encrypt(aes_bytekey)
 
-aes_key = AES.new(aes_bytekey,AES.MODE_CBC)
+aes_key = AES.new(aes_bytekey, AES.MODE_CBC)
 server.send(merchant_encrypted_key)
 
 #####################################################################
@@ -68,7 +65,7 @@ try:
     pkcs1_15.new(key).verify(SHA256.new(signature['SID']), (signature['SSID']))
     verification = True
 except (ValueError, TypeError):
-    verification= False
+    verification = False
 
 print(verification)
 
@@ -80,39 +77,39 @@ print(verification)
 """
 ########################################################################################
 
-PI = {'CardNumber':'XXXX-XXXX-XXXX-XXXX','CardExp':'07/20','CCode':764,'cPK':loadKey('cPK')}
+PI = {'CardNumber': 'XXXX-XXXX-XXXX-XXXX', 'CardExp': '07/20', 'CCode': 764, 'cPK': loadKey('cPK')}
 PI_bytes = pickle.dumps(PI)
-print("PI_Bytes",PI_bytes)
+print("PI_Bytes", PI_bytes)
 
-PM = (PI_bytes,pkcs1_15.new(RSA.import_key(loadKey('cSK'))).sign(SHA256.new(PI_bytes)))
+PM = (PI_bytes, pkcs1_15.new(RSA.import_key(loadKey('cSK'))).sign(SHA256.new(PI_bytes)))
 
 PM_bytes = pickle.dumps(PM)
 
-PO_withoutsig = {'OrderDescription':'Some description','SID':signature['SID'],'Amount':9000}
+PO_withoutsig = {'OrderDescription': 'Some description', 'SID': signature['SID'], 'Amount': 9000}
 PO_withoutsig_bytes = pickle.dumps(PO_withoutsig)
 
-PO = {'OrderDescription':'Some description','SID':signature['SID'],'Amount':9000,'SigC':pkcs1_15.new(RSA.import_key(loadKey('cSK'))).sign(SHA256.new(PO_withoutsig_bytes))}
+PO = {'OrderDescription': 'Some description', 'SID': signature['SID'], 'Amount': 9000,
+      'SigC': pkcs1_15.new(RSA.import_key(loadKey('cSK'))).sign(SHA256.new(PO_withoutsig_bytes))}
 PO_bytes = pickle.dumps(PO)
-print("PICKLE_LOADS\n",pickle.loads(PO_bytes))
+print("PICKLE_LOADS\n", pickle.loads(PO_bytes))
 
-aes_key = AES.new(aes_bytekey,AES.MODE_CBC)
+aes_key = AES.new(aes_bytekey, AES.MODE_CBC)
 
+PO_encrypted = aes_key.encrypt(pad(PO_bytes, AES.block_size))
+iv1 = aes_key.iv
+# print("iv1,", iv1)
+# server.send(iv)
+# server.send(PO_encrypted)
 
-PO_encrypted = aes_key.encrypt(pad(PO_bytes,AES.block_size))
-iv = aes_key.iv
-print("iv1,",iv)
-server.send(iv)
-server.send(PO_encrypted)
+aes_key = AES.new(aes_bytekey, AES.MODE_CBC)
 
-aes_key = AES.new(aes_bytekey,AES.MODE_CBC)
-
-
-PM_encrypted = aes_key.encrypt(pad(PM_bytes,AES.block_size))
-iv = aes_key.iv
-print("iv2,",iv)
-server.send(iv)
-server.send(PM_encrypted)
-
+PM_encrypted = aes_key.encrypt(pad(PM_bytes, AES.block_size))
+iv2 = aes_key.iv
+# print("iv2,", iv2)
+server.send(pickle.dumps({"IV2": iv2, "PM": PM_encrypted, "IV1": iv1, "PO": PO_encrypted}))
+print("hi", {"IV2": iv2, "PM": PM_encrypted, "IV1": iv1, "PO": PO_encrypted})
+# server.send(iv)
+# server.send(PM_encrypted)
 
 
 ########################################################################################

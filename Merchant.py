@@ -77,14 +77,18 @@ if len(data) > 0:
     msg = pickle.dumps({'SID': SID, 'SSID': SSID})
     print("sending..", msg)
     conn.send(msg)
-    iv= conn.recv(2048)
-    PO_encrypted = conn.recv(2048)
-    decryptAES_item(PO_encrypted, aes_encrypted_key, iv)
+    # iv= conn.recv(2048)
+    # PO_encrypted = conn.recv(2048)
+    # data = conn.recv(4096)
+    # {"IV1": iv1, "IV2":iv2, "PM":PM_encrypted, "PO":PO_encrypted}
+    data = pickle.loads(conn.recv(9096))
+    print("lol", data)
+    decryptAES_item(data["PO"], aes_encrypted_key, data["IV1"])
 
-    iv = conn.recv(1024)
-    PM_encrypted = conn.recv(2048)
+    # iv = conn.recv(1024)
+    # PM_encrypted = conn.recv(2048)
 
-    decryptAES_item(PM_encrypted,aes_encrypted_key,iv)
+    decryptAES_item(data["PM"], aes_encrypted_key, data["IV2"])
     # conn.send('aaa')
 
 conn.close()
