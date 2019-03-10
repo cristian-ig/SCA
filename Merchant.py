@@ -22,14 +22,12 @@ def decryptAESKey(aes_encrypted_key):
 
 def signSessionId(aes_encrypted_key):
     aes_decrypted_key = decryptAESKey(aes_encrypted_key)
-    print(aes_decrypted_key)
 
     SID = get_random_bytes(8)
+
     SID_hash = SHA256.new(SID)
     key = RSA.import_key(loadKey('mSK'))
-    # print("Session ID\n", SID)
 
-    # print("Initial hash\n", SID_hash)
     SSID = pkcs1_15.new(key).sign(SID_hash)
 
     # print("Signed hash\n", SSID)
@@ -40,14 +38,14 @@ def signSessionId(aes_encrypted_key):
     return (SID, SSID)
 
 def decryptAES_item(item,aes_encrypted_key,iv):
-    print("IV", iv)
+
     aes_decrypted_key = decryptAESKey(aes_encrypted_key)
     cipher = AES.new(aes_decrypted_key,AES.MODE_CBC,iv)
 
     item_decrypted = unpad(cipher.decrypt(item),AES.block_size)
 
-    print("PO_DECRIPT\n",item_decrypted)
-    print("PICKE", pickle.loads(item_decrypted))
+    return item_decrypted
+
 
 
 # random_generator = Random.new().read
@@ -71,24 +69,82 @@ data = None
 # while 1:
 data = conn.recv(3024)
 if len(data) > 0:
-    # print("Len", data)
     aes_encrypted_key = data
     SID, SSID = signSessionId(aes_encrypted_key)
     msg = pickle.dumps({'SID': SID, 'SSID': SSID})
-    print("sending..", msg)
     conn.send(msg)
-    # iv= conn.recv(2048)
-    # PO_encrypted = conn.recv(2048)
-    # data = conn.recv(4096)
-    # {"IV1": iv1, "IV2":iv2, "PM":PM_encrypted, "PO":PO_encrypted}
+
+
     data = pickle.loads(conn.recv(9096))
-    print("lol", data)
-    decryptAES_item(data["PO"], aes_encrypted_key, data["IV1"])
+    PO = decryptAES_item(data["PO"], aes_encrypted_key, data["IV1"])
 
-    # iv = conn.recv(1024)
-    # PM_encrypted = conn.recv(2048)
 
-    decryptAES_item(data["PM"], aes_encrypted_key, data["IV2"])
-    # conn.send('aaa')
+    PM = pickle.loads(decryptAES_item(data["PM"], aes_encrypted_key, data["IV2"]))
+    PI = pickle.loads(PM[0])
 
-conn.close()
+
+    mPK = loadKey("mPK")
+    mSK = loadKey("mSK")
+
+    signedRespone = {"SID":SID,"mPK":mPK,"Amount":PI['Amount']}
+    pickle_signedR = pickle.dumps(signedRespone)
+    pickle_signedR_hash  = SHA256.new(bin(int.from_bytes(pickle_signedR,byteorder='big')).encode("UTF-8"))
+    key = RSA.import_key(mSK)
+
+    response_for_pg = {"PM":PM,"USigM":pickle_signedR,"SigM":pkcs1_15.new(key).sign(pickle_signedR_hash)}
+
+    pg_rsa = RSA.import_key(loadKey('pgPK'))
+    cypher = PKCS1_OAEP.new(pg_rsa)
+
+    pickle_response_for_pg = pickle.dumps(response_for_pg)
+
+
+
+
+
+
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.connect((TCP_IP, 6024))
+# s.send(encrypted_response_for_pg)
+
+paymentGateway_publicKey = loadKey('pgPK')
+
+aes_bytekey = get_random_bytes(32)
+
+cipher_rsa = PKCS1_OAEP.new(RSA.import_key(paymentGateway_publicKey))
+merchant_encrypted_key = cipher_rsa.encrypt(aes_bytekey)
+server.send(merchant_encrypted_key)
+
+aes_key = AES.new(aes_bytekey, AES.MODE_CBC)
+encrypted_pickle_response_for_pg = aes_key.encrypt(pad(pickle_response_for_pg,AES.block_size))
+iv = aes_key.iv
+response = {'DATA':encrypted_pickle_response_for_pg,'iv':iv}
+server.send(pickle.dumps(response))
+
+pg_response = server.recv(4096)
+print(len(pg_response))
+pg_response_dict =pickle.loads(pg_response)
+print("RESPONSE DICT",pg_response_dict)
+
+cypher = AES.new(aes_bytekey,AES.MODE_CBC,pg_response_dict['iv'])
+
+pg_response_decrypted = pickle.loads(unpad(cypher.decrypt(pg_response_dict['DATA']),AES.block_size))
+uSigPG = {'Response':pg_response_decrypted['Response'],"SID":pg_response_decrypted["SID"],"Amount":pickle.loads(PM[0])['Amount']}
+
+verification = None
+try:
+    key = RSA.import_key(loadKey("pgPK"))
+    pkcs1_15.new(key).verify(SHA256.new(bin(int.from_bytes(pickle.dumps(uSigPG),byteorder='big')).encode("UTF-8")), (pg_response_decrypted['SigPG']))
+    verification = True
+except (ValueError, TypeError):
+    verification = False
+
+if verification:
+    UsigPg = {'Response':pg_response_decrypted['Response'],'SID':pg_response_decrypted['SID'],'Amount':pickle.loads(PM[0])['Amount']}
+    rsa_key = RSA.import_key(loadKey('mSK'))
+    response_for_client = {'Response':pg_response_decrypted['Response'],'SID':pg_response_decrypted['SID'],'SigPG':pkcs1_15.new(rsa_key).sign(SHA256.new(bin(int.from_bytes(pickle.dumps(UsigPg),byteorder='big')).encode("UTF-8")))}
+    conn.send(pickle.dumps(response_for_client))
+print(verification)
+print("PG RESPONSE DECRYPTED",pg_response_decrypted)
+

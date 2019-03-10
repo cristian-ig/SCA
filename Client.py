@@ -77,7 +77,7 @@ print(verification)
 """
 ########################################################################################
 
-PI = {'CardNumber': 'XXXX-XXXX-XXXX-XXXX', 'CardExp': '07/20', 'CCode': 764, 'cPK': loadKey('cPK')}
+PI = {'CardNumber': 'XXXX-XXXX-XXXX-XXXX', 'CardExp': '07/20', 'CCode': 764,'Amount':1000,'SID':signature['SID'], 'cPK': loadKey('cPK')}
 PI_bytes = pickle.dumps(PI)
 print("PI_Bytes", PI_bytes)
 
@@ -108,6 +108,21 @@ iv2 = aes_key.iv
 # print("iv2,", iv2)
 server.send(pickle.dumps({"IV2": iv2, "PM": PM_encrypted, "IV1": iv1, "PO": PO_encrypted}))
 print("hi", {"IV2": iv2, "PM": PM_encrypted, "IV1": iv1, "PO": PO_encrypted})
+
+final_respone = server.recv(4096)
+final_respone_dict = pickle.loads(final_respone)
+print("Final response ",final_respone_dict)
+USigPG = {"Response":final_respone_dict['Response'],"SID":final_respone_dict["SID"],"Amount":PI['Amount']}
+verification = None
+try:
+    key = RSA.import_key(loadKey("mPK"))
+    UsigPg = {'Response': final_respone_dict['Response'], 'SID': final_respone_dict['SID'],
+              'Amount': pickle.loads(PM_bytes[0])['Amount']}
+    pkcs1_15.new(key).verify(SHA256.new(bin(int.from_bytes(pickle.loads(USigPG),byteorder='big')).encode("UTF-8")), (final_respone_dict['SigPG']))
+    verification = True
+except (ValueError, TypeError):
+    verification = False
+print("Verification",verification)
 # server.send(iv)
 # server.send(PM_encrypted)
 
