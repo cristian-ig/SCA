@@ -146,5 +146,6 @@ if verification:
     response_for_client = {'Response':pg_response_decrypted['Response'],'SID':pg_response_decrypted['SID'],'SigPG':pkcs1_15.new(rsa_key).sign(SHA256.new(bin(int.from_bytes(pickle.dumps(UsigPg),byteorder='big')).encode("UTF-8")))}
     conn.send(pickle.dumps(response_for_client))
 print(verification)
+
 print("PG RESPONSE DECRYPTED",pg_response_decrypted)
 
