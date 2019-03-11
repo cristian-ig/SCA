@@ -1,17 +1,16 @@
-import Crypto
 from Crypto.PublicKey import RSA
+import socket
+
 from Crypto.Cipher import AES
-from Crypto import Random
-from Crypto.Hash import SHA256
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Signature import pkcs1_15
-from Crypto.Util.Padding import pad,unpad
-import json
-import pickle
+from Crypto.Util.Padding import pad, unpad
 
-from Utils import saveKey, loadKey
-import socket
+from Utils import loadKey
+
 
 def decryptAESKey(aes_encrypted_key):
     merchant_secretKey = loadKey('mSK')

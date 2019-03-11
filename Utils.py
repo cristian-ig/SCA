@@ -7,7 +7,6 @@ def saveKey(key, file):
 
 
 def loadKey(file):
-    key = None
     with open('keys/' + file, 'rb') as key_file:
         key = key_file.read()
     return key
@@ -65,6 +64,19 @@ def purge_database(dbname):
     
 def sign_message(key):
     pass
+
+
+def get_money_from_card(card_number):
+    db = TinyDB("bank.json")
+    q = Query()
+    return db.search(q.card == card_number)[0]["money"]
+
+
+def withdraw_money_from_card(card_number, amount):
+    db = TinyDB("bank.json")
+    q = Query()
+    return db.update({"money": get_money_from_card(card_number) - amount}, q.card == card_number)
+
 
 
 """
